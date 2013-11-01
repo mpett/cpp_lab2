@@ -1,0 +1,84 @@
+/////////////////////////////////////////////////////////////////
+//
+// Personuppgifter (namn, pnr, epost) på dem som gjort labben
+// Christoffer Wiss, 900201-0552, cwiss@kth.se
+// Martin Pettersson, 910127-3416, martinp4@kth.se
+
+
+
+/////////////////////////////////////////////////////////////////
+//
+// 2.1
+//
+// Avgör vilka konstruktorer som ska vara med. Behövs tilldelningsoperator?
+
+Det är förstås nödvändigt att ha med en default-konstruktor. Vi vill även ha en vanlig konstruktor som tar in alla nödvändiga värden som parametrar och genomför tilldelning på dessa.
+
+Vi vill även ha en tilldelningsoperator av liknande anledning som beskrivet ovan. Denna bör dock definieras som en virtuell funktion, då vi vid senare tillfälle vill ha möjlighet att konvertera olika datumtyper.
+
+// Vilka funktioner är const? Vilka argument/returtyper är const?
+
+Vid de situationer då vi endast vill returnera ett värde och inte göra några som helst förändringar på objektet. En returtyp som är const har begränsade användningsområden.
+
+Sammanfattningsvis ska värden vara const om man i förhand vet att de ska vara read-only.
+
+
+/////////////////////////////////////////////////////////////////
+//
+// 2.2
+//
+// Ta ställning till nedanstående fyra alternativ att ärva. (För- och nackdelar)
+--------------------------------
+  [Date]			
+    ^
+[Gregorian]
+    ^
+ [Julian]
+--------------------------------
+Gregorian eller Julian blir beroende av varandra arvmässigt.
+Inte "tillräckligt" annorlunda för att detta skall vara lönsamt.
+(Overlappar)
+ 
+--------------------------------
+  [Date]			
+    ^
+ [Julian]
+    ^
+[Gregorian]
+--------------------------------
+Gregorian eller Julian blir beroende av varandra arvmässigt.
+Inte "tillräckligt" annorlunda för att detta skall vara lönsamt.
+(Overlappar)
+
+--------------------------------
+           [Date]			
+     ^                ^
+[Gregorian]        [Julian]
+--------------------------------
+Finns bara fåtal typer som skall ärva från Date (datum typer).
+Dessa har annorlunda implementation och skall därav bara ärva 
+basfunktionalitet från Date.
+
+--------------------------------
+              [Date]			
+                 ^
+             [Middle]
+          ^              ^
+     [Gregorian]      [Julian]
+--------------------------------
+Finns bara fåtal typer som skall ärva från Date (datum typer).
+Således om det skulle kunna göras en middle klass som ett sorts mellansteg
+så skulle man lika gärna kunna flytta upp denna funktionalitet till Date.
+(Bra dock för mer nyanserade fall, tänk fordon)
+
+http://mysite.verizon.net/aesir_research/date/date0.htm
+
+/////////////////////////////////////////////////////////////////
+//
+// 2.3
+//
+// En dålig lösning är att ha datum och händelse i två parallella vektorer med 
+// gemensamt index. Varför?
+
+
+
