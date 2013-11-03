@@ -19,14 +19,14 @@ namespace lab2
 	{
 		enum WEEK_DAY_NR
 		{
-			SUNDAY = 0,
-			MONDAY,
+            MONDAY = 1,
 			TUESDAY,
 			WEDNESDAY,
 			THURSDAY,
 			FRIDAY,
 			SATURDAY,
-			DAYS_PER_WEEK
+            SUNDAY,
+            DAYS_PER_WEEK = SUNDAY
 		};
 		
 		enum MONTH_NR
@@ -48,7 +48,7 @@ namespace lab2
 		
 		public:
 			// Destructor.
-			~Julian(){}; 
+            ~Julian(){}
 			
 			// Default Constructor (sets date to current date).
 			Julian();
@@ -63,10 +63,10 @@ namespace lab2
 			Julian(const Date *date);
 			
 			// Postfix ++ operator; Increases date by one day.
-			// Julian operator++(int);
+            Julian operator++(int);
 			
 			// Postfix -- operator; Decreases date by one day.
-			// Julian operator--(int);
+            Julian operator--(int);
 			
 			// Returns the nr of days for current month.
 			int days_this_month() const;
@@ -91,13 +91,14 @@ namespace lab2
 			void add_month(int n = 1);
 			
 			// Returns Julian day number.
-			double mod_julian_day() const;
+            int mod_julian_day() const;
 
 		private:
 			// Nr of days in a default month, used when one cannot get the same date after adding a month (ex. 31 Jan + 1 month != 31 February)
 			static const int GENERIC_MONTH_D = 30; 
-			
 			int daysPerMonths_[MONTHS_PER_YEAR];
+            static const int MIN_YEAR = 1858; // Smallest year that can be set
+            static const int MAX_YEAR = 2558; // Largest year that can be set
 			
 			// Checks if current date is a valid Julian date.
 			void checkValidDate();
@@ -111,7 +112,7 @@ namespace lab2
 			
 			// Set Julian date (using a quite dreadful formula) 
 			// given a Julian day number.
-			void setDateFromJulian(double julian);
+            void setDateFromJulian(double julian);
 
 			// Used for converting a Gregorian date (given by current time) to a Julian Date.
 			void convertFromGregorianToJulian(int year, int month, int monthDay);

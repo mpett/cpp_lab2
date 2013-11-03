@@ -56,7 +56,7 @@ namespace lab2
 			virtual string month_name() const = 0;
 
 			// Assignment operator. Assigns from date reference. Returns reference to a new date object.
-			virtual Date& operator=(const Date& date);
+			virtual Date& operator=(const Date& date) = 0;
 
 			// Prefix ++ operator; Increases date by one day.
 			Date& operator++();
@@ -118,8 +118,8 @@ namespace lab2
 			// (in order to provide a common base) and then do the subtraction.
 			int operator-(const Date& rhs) const;
 			
-			// Returns number of days from modified julian day.
-			virtual double mod_julian_day() const = 0;
+            // Returns number of days from modified julian day.
+            virtual int mod_julian_day() const = 0;
 		
 		protected:
 			int currentYear_;

@@ -18,15 +18,15 @@ namespace lab2
 	class Gregorian : public Date
 	{
 		enum WEEK_DAY_NR
-		{
-			SUNDAY = 0,
-			MONDAY,
+        {
+            MONDAY = 1,
 			TUESDAY,
 			WEDNESDAY,
 			THURSDAY,
 			FRIDAY,
-			SATURDAY,
-			DAYS_PER_WEEK
+            SATURDAY,
+            SUNDAY,
+            DAYS_PER_WEEK = SUNDAY
 		};
 		
 		enum MONTH_NR
@@ -48,7 +48,7 @@ namespace lab2
 		
 		public:
 			// Destructor.
-			~Gregorian(){}; 
+            ~Gregorian(){}
 			
 			// Default Constructor (sets date to current date).
 			Gregorian();
@@ -62,11 +62,11 @@ namespace lab2
 			// Construct Gregorian from Date pointer.
 			Gregorian(const Date *date);
 			
-			// Postfix ++ operator; Increases date by one day
-			// Julian operator++(int);
+            // Postfix ++ operator; Increases date by one day.
+            Gregorian operator++(int);
 			
-			// Postfix -- operator; Decreases date by one day
-			// Julian operator--(int);
+            // Postfix -- operator; Decreases date by one day.
+            Gregorian operator--(int);
 			
 			// Returns the nr of days for current month.
 			int days_this_month() const;
@@ -91,12 +91,14 @@ namespace lab2
 			void add_month(int n = 1);
 			
 			// Returns Julian day number.
-			double mod_julian_day() const;
+            int mod_julian_day() const;
 
 		private:
 			static const int GENERIC_MONTH_D = 30; // Nr of days in a default month, used when one cannot get the same date after adding a month (ex. 31 Jan + 1 month != 31 February)
 			int daysPerMonths_[MONTHS_PER_YEAR];
-			
+            static const int MIN_YEAR = 1858; // Smallest year that can be set
+            static const int MAX_YEAR = 2558; // Largest year that can be set
+
 			// Checks if current date is a valid Julian date.
 			void checkValidDate();
 			
@@ -112,7 +114,7 @@ namespace lab2
 			
 			// Set Gregorian date (using a quite horrible formula)
 			// given a Julian day number.
-			void setDateFromJulian(double julian);
+            void setDateFromJulian(double julian);
 
 			// Updates the nr of days in february.
 			// (29 if leapyear, 28 otherwise)

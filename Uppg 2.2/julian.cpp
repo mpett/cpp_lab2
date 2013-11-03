@@ -36,7 +36,7 @@ Julian::Julian()
 // Copy constructor.
 Julian::Julian(const Date &date)
 {
-	double tmp = date.mod_julian_day();
+    double tmp = date.mod_julian_day();
 	setDateFromJulian(tmp);
 	daysPerWeek_   = DAYS_PER_WEEK;
 	monthsPerYear_ = MONTHS_PER_YEAR;
@@ -47,7 +47,7 @@ Julian::Julian(const Date &date)
 // Construct Julian from Date pointer.
 Julian::Julian(const Date *date)
 {
-	double tmp = date->mod_julian_day();
+    double tmp = date->mod_julian_day();
 	setDateFromJulian(tmp);
 	daysPerWeek_   = DAYS_PER_WEEK;
 	monthsPerYear_ = MONTHS_PER_YEAR;
@@ -58,10 +58,11 @@ Julian::Julian(const Date *date)
 // Assignment operator. Assigns from date reference. Returns reference to a new date object.
 Julian& Julian::operator=(const Date& date)
 {
-	double tmp = date.mod_julian_day();
+    double tmp = date.mod_julian_day();
 	setDateFromJulian(tmp);
 	updateFebruaryDays(isLeapYear());
 	checkValidDate();
+    return (*this);
 }
 
 // Used for converting a Gregorian date (given by current time) to a Julian Date.
@@ -73,14 +74,16 @@ void Julian::convertFromGregorianToJulian(int year, int month, int monthDay)
 		year--;
 	}	
 	// Calculate Julian Day Number using Gregorian conversion formula
-	double jdn = monthDay + int((153*month - 457)/5.0) + 365*year + floor(year/4) - floor(year/100) + floor(year/400) + 1721118.5;
+    double jdn = monthDay + int((153*month - 457)/5.0) + 365*year + floor(year/4) - floor(year/100) + floor(year/400) + 1721118 - 2400000;
 	setDateFromJulian(jdn);
 }
 
 // Set Julian date (using a quite dreadful formula) 
 // given a Julian day number.
-void Julian::setDateFromJulian(double julian)
+void Julian::setDateFromJulian(double modjulian)
 {
+    double julian = modjulian + 2400000.5;
+
 	int Z = (int) (julian - 1721116.5);
 	double R = julian - 1721116.5 - Z;
 	currentYear_ = (int) ((Z - 0.25) / 365.25);
@@ -93,8 +96,29 @@ void Julian::setDateFromJulian(double julian)
        	currentMonth_ -= 12;
 	}
 
+    int res = int(julian+1.5)%7;
+    if(res == 0) res = 7;
+
 	// Set Day of week
-	currentWeekday_ = int(julian+1.5)%7;	
+    currentWeekday_ = res;
+}
+
+// Postfix ++ operator; Increases date by one day.
+// Returns a copy of self (before change was applied)
+Julian Julian::operator++(int)
+{
+    Julian res = (*this);
+    Date::operator++();
+    return res;
+}
+
+// Postfix -- operator; Decreases date by one day.
+// Returns a copy of self (before change was applied)
+Julian Julian::operator--(int)
+{
+    Julian res = (*this);
+    Date::operator--();
+    return res;
 }
 
 // Adds n to current month, ensures that new date is valid.
@@ -102,31 +126,33 @@ void Julian::setDateFromJulian(double julian)
 // n : nr of months to add/subtract
 void Julian::add_month(int n)
 {
-	int sign = ((n > 0) ? 1 : -1);
+    int sign = ((n > 0) ? 1 : -1);
 	int nrMonths = abs(n);
-	int nextMonth;
+    int nextMonth = currentMonth_;
 	// Subtract/add one month at a time
 	for(int i = 0; i < nrMonths; i++)
 	{
-		nextMonth = currentMonth_ + sign;
+        nextMonth += sign;
 		// Have we passed a year?
 		if((nextMonth > monthsPerYear_) || (nextMonth < 1))
 		{
 			currentYear_ += sign;                // Increase/decrease year
-			updateFebruaryDays(isLeapYear());	  // Update February days
+            updateFebruaryDays(isLeapYear());	 // Update February days
 			nextMonth    -= sign*monthsPerYear_; // Increase/decrease month so that it is correct (i.e. January-1 = December)
 		}
-		
+
 		// Check if there are less days in next month
 		if(daysPerMonths_[(nextMonth-1)] < currentDay_)
 		{
-			(*this) += GENERIC_MONTH_D; // Add month generic amount of days (30) instead
+            operator+=(sign*GENERIC_MONTH_D); // Add month generic amount of days (30) instead
+			nextMonth = currentMonth_;
 		}
 		else
 		{
 			currentMonth_ = nextMonth;
 		}
 	}
+    currentWeekday_ = calculateCurrentWeekday(currentYear_, currentMonth_, currentDay_);
 	checkValidDate(); // This should probably be removed once sure that everything functions correctly
 }
 
@@ -151,6 +177,7 @@ void Julian::add_year(int n)
 			currentDay_ = daysPerMonths_[(currentMonth_-1)];
 		}
 	}
+    currentWeekday_ = calculateCurrentWeekday(currentYear_, currentMonth_, currentDay_);
 	checkValidDate(); // This should probably be removed once sure that everything functions correctly
 }
 
@@ -323,7 +350,7 @@ void Julian::initializeDaysPerMonths(bool leapYear)
 }
 
 // Calculates the current weekday given year, month and day of the month.
-int Julian::calculateCurrentWeekday(int year, int month, int monthDay) 
+int Julian::calculateCurrentWeekday(int year, int month, int monthDay)
 {
 	if(month < 3)
 	{
@@ -331,13 +358,16 @@ int Julian::calculateCurrentWeekday(int year, int month, int monthDay)
 		year--;
 	}
 	
-	double jdn = (int) (365.25 * (year + 4716)) + (int)(30.6001 * (month + 1)) + monthDay - 1524.5;
+    double jdn = (int) (365.25 * (year + 4716)) + (int)(30.6001 * (month + 1)) + monthDay + 0.5 - 1524.5;
 
-	return int(jdn+1.5)%7;	
+    int res = int(jdn+1.5)%7;
+    if(res == 0) res = 7;
+
+    return res;
 }
 
 // Returns Julian day number.
-double Julian::mod_julian_day() const
+int Julian::mod_julian_day() const
 {
 	int M = currentMonth_;
 	int Y = currentYear_;
@@ -348,15 +378,16 @@ double Julian::mod_julian_day() const
 		Y--;
 	}
 	
-	return (int) (365.25 * (Y + 4716)) + (int)(30.6001 * (M + 1)) + currentDay_ - 1524.5;
+    return (int) (365.25 * (Y + 4716)) + (int)(30.6001 * (M + 1)) + currentDay_ - 1524 - 2400000 -1;
 }
 
 // Checks if current date is a valid Julian date.
 void Julian::checkValidDate() 
 {
-	if(currentMonth_ > MONTHS_PER_YEAR || currentMonth_ < 1 
-		|| currentDay_ > daysPerMonths_[currentMonth_ - 1] || currentDay_ < 1)
-	{
-		throw std::out_of_range("Date out of range.");
-	}
+    if(currentMonth_ > MONTHS_PER_YEAR || currentMonth_ < 1
+        || currentDay_ > daysPerMonths_[currentMonth_ - 1] || currentDay_ < 1
+        || currentYear_ < MIN_YEAR || currentYear_ > MAX_YEAR)
+    {
+        throw std::out_of_range("Date out of range.");
+    }
 }

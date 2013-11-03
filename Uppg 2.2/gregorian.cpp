@@ -31,6 +31,9 @@ Gregorian::Gregorian()
 	currentMonth_   = t->tm_mon + 1;
 	currentDay_     = t->tm_mday;
 	currentWeekday_ = t->tm_wday;
+
+    if(currentWeekday_ == 0) currentWeekday_ = 7;
+
 	daysPerWeek_    = DAYS_PER_WEEK;
 	monthsPerYear_  = MONTHS_PER_YEAR;
 	initializeDaysPerMonths(isLeapYear());
@@ -40,7 +43,7 @@ Gregorian::Gregorian()
 // Copy constructor.
 Gregorian::Gregorian(const Date &date)
 {
-	double tmp = date.mod_julian_day();
+    double tmp = date.mod_julian_day();
 	setDateFromJulian(tmp);
 	daysPerWeek_   = DAYS_PER_WEEK;
 	monthsPerYear_ = MONTHS_PER_YEAR;
@@ -51,7 +54,7 @@ Gregorian::Gregorian(const Date &date)
 // Construct Gregorian from Date pointer.
 Gregorian::Gregorian(const Date *date)
 {
-	double tmp = date->mod_julian_day();
+    double tmp = date->mod_julian_day();
 	setDateFromJulian(tmp);
 	daysPerWeek_   = DAYS_PER_WEEK;
 	monthsPerYear_ = MONTHS_PER_YEAR;
@@ -62,16 +65,19 @@ Gregorian::Gregorian(const Date *date)
 // Assignment operator. Assigns from date reference. Returns reference to a new date object.
 Gregorian& Gregorian::operator=(const Date& date)
 {
-	double tmp = date.mod_julian_day();
+    double tmp = date.mod_julian_day();
 	setDateFromJulian(tmp);
 	updateFebruaryDays(isLeapYear());
 	checkValidDate();
+    return (*this);
 }
 
 // Set Gregorian date (using a quite horrible formula)
 // given a Julian day number.
-void Gregorian::setDateFromJulian(double julian)
+void Gregorian::setDateFromJulian(double modjulian)
 {
+    double julian = modjulian + 2400000.5; // Create a julian number
+
 	int Z = (int) (julian - 1721118.5);
 	double R = julian - 1721118.5 - Z;
 	double G = Z - 0.25;
@@ -90,8 +96,29 @@ void Gregorian::setDateFromJulian(double julian)
        	currentMonth_ -= 12;
 	}
 
-	// Set Day of week 
-	currentWeekday_ = int(julian+1.5)%7;	
+    int res = int(julian+1.5)%7;
+    if(res == 0) res = 7;
+
+    // Set Day of week
+    currentWeekday_ = res;
+}
+
+// Postfix ++ operator; Increases date by one day.
+// Returns a copy of self (before change was applied)
+Gregorian Gregorian::operator++(int)
+{
+    Gregorian res = (*this);
+    Date::operator++();
+    return res;
+}
+
+// Postfix -- operator; Decreases date by one day.
+// Returns a copy of self (before change was applied)
+Gregorian Gregorian::operator--(int)
+{
+    Gregorian res = (*this);
+    Date::operator--();
+    return res;
 }
 
 // Adds n to current month, ensures that new date is valid.
@@ -99,31 +126,33 @@ void Gregorian::setDateFromJulian(double julian)
 // n : nr of months to add/subtract
 void Gregorian::add_month(int n)
 {
-	int sign = ((n > 0) ? 1 : -1);
-	int nrMonths = abs(n);
-	int nextMonth;
+    int sign      = ((n > 0) ? 1 : -1);
+    int nrMonths  = abs(n);
+    int nextMonth = currentMonth_;
 	// Subtract/add one month at a time
 	for(int i = 0; i < nrMonths; i++)
 	{
-		nextMonth = currentMonth_ + sign;
+        nextMonth += sign;
 		// Have we passed a year?
 		if((nextMonth > monthsPerYear_) || (nextMonth < 1))
 		{
 			currentYear_ += sign;                // Increase/decrease year
-			updateFebruaryDays(isLeapYear());	  // Update February days
+            updateFebruaryDays(isLeapYear());	 // Update February days
 			nextMonth    -= sign*monthsPerYear_; // Increase/decrease month so that it is correct (i.e. January-1 = December)
 		}
 		
 		// Check if there are less days in next month
 		if(daysPerMonths_[(nextMonth-1)] < currentDay_)
 		{
-			(*this) += GENERIC_MONTH_D; // Add month generic amount of days (30) instead
+            operator+=(sign*GENERIC_MONTH_D); // Add month generic amount of days (30) instead
+			nextMonth = currentMonth_;
 		}
 		else
 		{
 			currentMonth_ = nextMonth;
 		}
 	}
+    currentWeekday_ = calculateCurrentWeekday(currentYear_, currentMonth_, currentDay_);
 	checkValidDate(); // This should probably be removed once sure that everything functions correctly
 }
 
@@ -148,6 +177,7 @@ void Gregorian::add_year(int n)
 			currentDay_ = daysPerMonths_[(currentMonth_-1)];
 		}
 	}
+    currentWeekday_ = calculateCurrentWeekday(currentYear_, currentMonth_, currentDay_);
 	checkValidDate(); // This should probably be removed once sure that everything functions correctly
 }
 
@@ -332,13 +362,16 @@ int Gregorian::calculateCurrentWeekday(int year, int month, int monthDay)
 		year--;
 	}
 	
-	double jdn = monthDay + int((153*month - 457)/5.0) + 365*year + floor(year/4) - floor(year/100) + floor(year/400) + 1721118.5;
+    double jdn = monthDay + 0.5 + int((153*month - 457)/5.0) + 365*year + floor(year/4) - floor(year/100) + floor(year/400) + 1721118.5;
 
-	return int(jdn+1.5)%7;	
+    int res = int(jdn+1.5)%7;
+    if(res == 0) res = 7;
+
+    return res;
 }
 
 // Returns the Julian Day number.
-double Gregorian::mod_julian_day() const
+int Gregorian::mod_julian_day() const
 {
 	int M = currentMonth_;
 	int Y = currentYear_;
@@ -349,14 +382,15 @@ double Gregorian::mod_julian_day() const
 		Y--;
 	}
 	
-	return currentDay_ + int((153*M - 457)/5.0) + 365*Y + floor(Y/4) - floor(Y/100) + floor(Y/400) + 1721118.5;
+    return currentDay_+ int((153*M - 457)/5.0) + 365*Y + floor(Y/4) - floor(Y/100) + floor(Y/400) + 1721118 - 2400000;
 }
 
 // Checks if current date is a valid Gregorian date.
 void Gregorian::checkValidDate() 
 {
 	if(currentMonth_ > MONTHS_PER_YEAR || currentMonth_ < 1 
-		|| currentDay_ > daysPerMonths_[currentMonth_ - 1] || currentDay_ < 1)
+        || currentDay_ > daysPerMonths_[currentMonth_ - 1] || currentDay_ < 1
+        || currentYear_ < MIN_YEAR || currentYear_ > MAX_YEAR)
 	{
 		throw std::out_of_range("Date out of range.");
 	}
