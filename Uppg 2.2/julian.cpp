@@ -2,7 +2,7 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-01
+/// Version: 2013-11-03
 
 #include "julian.h"
 #include <stdexcept>

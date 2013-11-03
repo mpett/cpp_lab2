@@ -549,7 +549,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 53429);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // FEBRUARY 2105: NOT A LEAP YEAR    
     test_g.add_year(100);
 	Gregorian new_g(2105,2,28);
 
@@ -568,7 +568,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 89953);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // FEBRUARY 1905: NOT A LEAP YEAR    
     test_g.add_year(-200);
 
     std::cout << "Subtracted 200 years - NOT LEAP YEAR - Current date is now: " << test_g << std::endl;
@@ -585,7 +585,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 16904);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // JANUARY 1900: NOT A LEAP YEAR    
     
 	test_g.add_year(-5);
     test_g.add_month(-1);
@@ -604,7 +604,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 15022);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // DECEMBER 1899: NOT A LEAP YEAR    
     
     test_g--;
     test_g--;
@@ -623,7 +623,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 15019);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // JUNE 1901: NOT A LEAP YEAR    
 
     test_g.add_month(17);
 
@@ -640,7 +640,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 15537);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // JANUARY 1900: NOT A LEAP YEAR    
 
     test_g.add_month(-17);
 
@@ -657,7 +657,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 15021);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // SEPTEMBER 1898: NOT A LEAP YEAR    
 
     test_g += 29;
     test_g.add_month(-17);
@@ -675,7 +675,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 14533);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // SEPTEMBER 1899: NOT A LEAP YEAR    
 
     test_g += 366;
 
@@ -692,7 +692,7 @@ int main()
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 14899);
 
-    // FEBRUARY 2005: NOT A LEAP YEAR    
+    // SEPTEMBER 1898: NOT A LEAP YEAR    
 
     test_g -= 366;
 
@@ -708,8 +708,6 @@ int main()
     assert(test_g.month_name() == "september");
     assert(test_g.months_per_year() == 12);
     assert(floor(test_g.mod_julian_day()) == 14533);
-
-
 
     // From the lab-PM
     Gregorian gn; // dagens datum

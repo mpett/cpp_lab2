@@ -4,10 +4,9 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-01
+/// Version: 2013-11-03
 
 #include "date.h"
-#include <iostream>
 
 using namespace lab2;
 
@@ -49,18 +48,6 @@ int Date::months_per_year() const
 {
 	return monthsPerYear_;
 }
-
-// Assignment operator. Assigns from date reference. Returns reference to a new date object.
-/*Date& Date::operator=(const Date& date) 
-{
-	currentYear_    = date.currentYear_;
-	currentWeekday_ = date.currentWeekday_;
-	daysPerWeek_    = date.daysPerWeek_;
-	monthsPerYear_  = date.monthsPerYear_;
-	currentMonth_   = date.currentMonth_;
-    currentDay_	    = date.currentDay_;
-	return *this;
-}*/
 
 // Prefix ++ operator; Increases date by one day.
 Date& Date::operator++()
