@@ -80,5 +80,12 @@ http://mysite.verizon.net/aesir_research/date/date0.htm
 // En dålig lösning är att ha datum och händelse i två parallella vektorer med 
 // gemensamt index. Varför?
 
+Snabbhet? 
 
-
+template class
+add_event
+remove_event
+constructor
+assignment
+utskriftsoperator
+set_date
