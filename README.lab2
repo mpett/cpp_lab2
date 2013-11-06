@@ -81,11 +81,5 @@ http://mysite.verizon.net/aesir_research/date/date0.htm
 // gemensamt index. Varför?
 
 Snabbhet? 
-
-template class
-add_event
-remove_event
-constructor
-assignment
-utskriftsoperator
-set_date
+1. Risk att glömma ta bort i båda skapar fel möjligheter.
+2. Eftersom events ska sorteras efter datum blir det svårt (dyrt) att hålla båda vektorer sorterade.
