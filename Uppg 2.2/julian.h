@@ -2,7 +2,7 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-03
+/// Version: 2013-11-06
 
 #pragma once
 
@@ -89,6 +89,9 @@ namespace lab2
 			//
 			// n : nr of months to add/subtract
 			void add_month(int n = 1);
+			
+			// Sets the date's year, month and day to input.
+			void set_date(int year, int month, int day);
 			
 			// Returns Julian day number.
             int mod_julian_day() const;

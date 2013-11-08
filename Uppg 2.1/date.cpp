@@ -4,14 +4,14 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-01
+/// Version: 2013-11-03
 
 #include "date.h"
 
 using namespace lab2;
 
 // Destructor (deallocate allocated memory here).
-Date::~Date(){};
+Date::~Date(){}
 
 // Returns the current year.
 int Date::year() const
@@ -49,19 +49,6 @@ int Date::months_per_year() const
 	return monthsPerYear_;
 }
 
-// Assignment operator. Assigns from date reference. Returns reference to a new date object.
-Date& Date::operator=(const Date& date) 
-{
-	currentYear_    = date.currentYear_;
-	currentWeekday_ = date.currentWeekday_;
-	daysPerWeek_    = date.daysPerWeek_;
-	monthsPerYear_  = date.monthsPerYear_;
-	currentMonth_   = date.currentMonth_;
-	currentDay_	 = date.currentDay_;
-
-	return *this;
-}
-
 // Prefix ++ operator; Increases date by one day.
 Date& Date::operator++()
 {
@@ -69,9 +56,9 @@ Date& Date::operator++()
 	currentWeekday_++;
 	
 	// Are we in the next week? 
-	if(currentWeekday_ >= daysPerWeek_)
+    if(currentWeekday_ > daysPerWeek_)
 	{
-		currentWeekday_ = 0;
+        currentWeekday_ = 1;
 	}
 	
 	// Are we in a new month?
@@ -97,21 +84,23 @@ Date& Date::operator--()
 	currentWeekday_--;
 	
 	// Are we in the previous week?
-	if(currentWeekday_ < 0)
+    if(currentWeekday_ < 1)
 	{
-		currentWeekday_ = (daysPerWeek_-1);
+        currentWeekday_ = daysPerWeek_;
 	}
 	
 	// Are we in the previous month?
 	if(currentDay_ < 1)
 	{
 		currentMonth_--;
+		bool isPrevYear = (currentMonth_ < 1);
+		
+		if(isPrevYear) currentMonth_ = monthsPerYear_;
 		currentDay_ = days_this_month();
 		
 		// Are we in previous year?
-		if(currentMonth_ < 1)
+		if(isPrevYear)
 		{
-			currentMonth_ = monthsPerYear_;
 			add_year(-1);
 		}
 	}
@@ -121,20 +110,34 @@ Date& Date::operator--()
 // Compound += operator; Adds val number of days to current date. 
 Date& Date::operator+=(int val)
 {	
-	for(int i = 0; i < val; i++)
-	{
-		++(*this);
-	}
+    if(val < 0)
+    {
+        operator-=(-val);
+    }
+    else
+    {
+        for(int i = 0; i < val; i++)
+        {
+            operator++();
+        }
+    }
 	return *this;
 }
 
 // Compound -= operator; Subtracts val number of days from current date. 
 Date& Date::operator-=(int val)
 {	
-	for(int i = 0; i < val; i++)
-	{
-		--(*this);
-	}
+    if(val < 0)
+    {
+        operator+=(-val);
+    }
+    else
+    {
+        for(int i = 0; i < val; i++)
+        {
+            operator--();
+        }
+    }
 	return *this;
 }
 
@@ -143,6 +146,16 @@ Date& Date::operator-=(int val)
 void Date::add_year(int n)
 {
 	currentYear_ += n;
+}
+
+// Assignment operator. Assigns from date reference. Returns reference to a new date object.
+Date& Date::operator=(const Date& date)
+{
+    currentYear_    = date.currentYear_;
+    currentMonth_   = date.currentMonth_;
+    currentDay_     = date.currentDay_;
+    currentWeekday_ = date.currentWeekday_;
+	return *this;
 }
 
 // Checks if two dates are the same.

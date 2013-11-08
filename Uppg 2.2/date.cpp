@@ -148,6 +148,16 @@ void Date::add_year(int n)
 	currentYear_ += n;
 }
 
+// Assignment operator. Assigns from date reference. Returns reference to a new date object.
+Date& Date::operator=(const Date& date)
+{
+    currentYear_    = date.currentYear_;
+    currentMonth_   = date.currentMonth_;
+    currentDay_     = date.currentDay_;
+    currentWeekday_ = date.currentWeekday_;
+	return *this;
+}
+
 // Checks if two dates are the same.
 // This is done by first converting both dates to their Julian Day number
 // (in order to provide a common base) and then do the comparison.

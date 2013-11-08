@@ -1,6 +1,5 @@
-/// Description: A calendar of specified type.
-///              Type must be derived from Date.
-///              A calendar maintains events_ and is capable of outputting.
+/// Description: A calendar of specified type. Type must be derived from Date.
+///              A calendar maintains events_ and is capable of outputting them in a format of date : description.
 ///
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
@@ -52,6 +51,9 @@ namespace lab2
         // Destructor
         ~Calendar();
 
+		// Comparer function which compairs only the date (first) part of the pair.
+        static bool pairCompare(const pair<T, string> &firstElem, const pair<T, string> &secondElem);
+
         // Adds an even to the calender at currentDate_.
         // If event is unique (i.e. does an event with same description at input date) adds event and returns true
         // otherwise returns false.
@@ -101,7 +103,6 @@ namespace lab2
 
         // Helper function to assignment.
 		template<class G> Calendar<T> &assignment_helper(const Calendar<G> &calendar, std::true_type);
-		
 
     private:
         Date *currentDate_;
@@ -183,6 +184,13 @@ namespace lab2
         return add_event(desc,day,month,currentDate_->year());
     }
 
+	// Comparer function which compairs only the date (first) part of the pair.
+    template<class T>
+    bool Calendar<T>::pairCompare(const pair<T, string> &firstElem, const pair<T, string> &secondElem)
+    {
+      return firstElem.first < secondElem.first;
+    }
+
     // Adds an even to the calender at input date.
     // If event is unique (i.e. does an event with same description at input date) adds event and returns true
     // otherwise returns false.
@@ -210,7 +218,7 @@ namespace lab2
         events_.push_back(pair<T,string>(date,desc));
 
         // Sort events after date (ascending order)
-        std::sort(events_.begin(), events_.end());
+        std::stable_sort(events_.begin(), events_.end(), Calendar<T>::pairCompare);
         return true;
     }
 

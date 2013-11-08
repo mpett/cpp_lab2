@@ -56,9 +56,9 @@ int main()
     cal2.add_event("T:1879-5-2");
     cal2.add_event("T:1879-5-27", 27);
     cal2.add_event("T:1879-1-27", 27,1);
-    cal2.add_event("T:1870-1-27", 27,1,1870);
-    cal2.add_event("T:1870-1-27", 27,1,1870);
-    cal2.add_event("T:1870-1-27B", 27,1,1870);
+    cal2.add_event("B", 27,1,1870);
+    cal2.add_event("T:1876-1-27", 27,1,1870);
+    cal2.add_event("A", 27,1,1870);
     cal2.add_event("T:1920-1-27", 27,1,1920);
     cal2.add_event("T:1860-5-2",2,5,1860);
     cal2.add_event("Testing on a friday?", 27,1,2100);
@@ -87,16 +87,26 @@ int main()
 	if(!cal1.add_event("Testing on Christmas2",25,12,2089)) std::cout << "failed" << std::endl;
 	if(!cal1.add_event("Testing on Christmas1",30,12,1989)) std::cout << "failed" << std::endl;
 	cal1.add_event("Testing");
-    //cal1.set_date(1879,12,20);
-	//cal1.set_date(1990,1,2);
-	
+
 	std::cout << cal1 << std::endl;
 
+    // Testing assignment
+    cal2 = cal1;
+    assert(cal1.remove_event("Testing on a friday?",28,1,1920) == false);
+    assert(cal2.remove_event("Testing on a friday?",10,2,1920) == false);
+    assert(cal1.add_event("Testing on a friday?",28,1,1920) == true);
+    assert(cal2.add_event("Testing on a friday?",10,2,1920) == true);
+    assert(cal1.remove_event("Testing on a friday?",28,1,1920) == true);
+    assert(cal2.remove_event("Testing on a friday?",10,2,1920) == true);
+    assert(cal1.add_event("Testing on Christmas 1",20,12,1989) == false);
+    assert(cal2.add_event("Testing on Christmas 1",2,1,1990) == false);
+    assert(cal1.remove_event("Testing on Christmas 1",20,12,1989) == true);
+    assert(cal2.remove_event("Testing on Christmas 1",2,1,1990) == true);
+    assert(cal1.add_event("Testing on Christmas 1",20,12,1989) == true);
+    assert(cal2.add_event("Testing on Christmas 1",2,1,1990) == true);
 
+    Calendar<Julian> cal_j;
+    Calendar<Gregorian> cal_g;
 
-
-
-	
-	
 	return 0;
 }

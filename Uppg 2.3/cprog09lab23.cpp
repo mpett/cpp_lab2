@@ -66,17 +66,21 @@ namespace {
 				} else if(command == "newcopy") {
 					const size_t idx = read_idx_or_die();
 					cals.push_back(new Calendar<T>(*const_cast<const Calendar<T> *>(cals[idx])));
+                    cout << "newcopy" << endl;
 				} else if(command == "newcopyother") {
 					const size_t idx = read_idx_or_die(true);
 					cals.push_back(new Calendar<T>(*const_cast<const Calendar<S> *>((*others)[idx])));
+                    cout << "newcopyother" << endl;
 				} else if(command == "copy") {
 					const size_t from = read_idx_or_die();
 					const size_t to = read_idx_or_die();
+                    cout << "Copy" << endl;
 					(*cals[to]) = *const_cast<const Calendar<T> *>(cals[from]);
 				} else if(command == "copyother") {
 					const size_t from = read_idx_or_die(true);
 					const size_t to = read_idx_or_die();
 					(*cals[to]) = *const_cast<const Calendar<S> *>((*others)[from]);
+                    cout << "CopyOther" << endl;
 				} else if(command == "print") {
 					const size_t idx = read_idx_or_die();
 					cout << "L" << linenr << ":C" << idx << ";print" << endl <<*const_cast<const Calendar<T> *>(cals[idx]);
@@ -86,7 +90,7 @@ namespace {
 					int y, m, d;
 					if(scanf("%d%d%d", &y, &m, &d) != 3)
 						assert(!"Failed to read date for set_date");
-					cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->set_date(y,m,d) << endl;
+                    cout << "L" << linenr << ":C" << idx << ";S" <<cals[idx]->set_date(y,m,d) << endl;
 				} else if(command == "add_event") {
 					const size_t idx = read_idx_or_die();
 					int y, m, d;
@@ -94,10 +98,10 @@ namespace {
 						assert(!"Failed to read eventstring for add_event");
 					const std::string event(buf);
 					switch(scanf("%d%d%d", &d, &m, &y)) {
-						case 0: case EOF: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->add_event(event) << endl; break;
-						case 1: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->add_event(event, d) << endl; break;
-						case 2: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->add_event(event, d, m) << endl; break;
-						case 3: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->add_event(event, d, m, y) << endl; break;
+                        case 0: case EOF: cout << "L" << linenr << ":C" << idx << ";A" <<cals[idx]->add_event(event) << endl; break;
+                        case 1: cout << "L" << linenr << ":C" << idx << ";A" <<cals[idx]->add_event(event, d) << endl; break;
+                        case 2: cout << "L" << linenr << ":C" << idx << ";A" <<cals[idx]->add_event(event, d, m) << endl; break;
+                        case 3: cout << "L" << linenr << ":C" << idx << ";A" <<cals[idx]->add_event(event, d, m, y) << endl; break;
 						default:
 								  assert(!"Unreachable code (add_event switch)");
 					}
@@ -108,10 +112,10 @@ namespace {
 						assert(!"Failed to read eventstring for remove_event");
 					const std::string event(buf);
 					switch(scanf("%d%d%d", &d, &m, &y)) {
-						case 0: case EOF: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->remove_event(event) << endl; break;
-						case 1: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->remove_event(event, d) << endl; break;
-						case 2: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->remove_event(event, d, m) << endl; break;
-						case 3: cout << "L" << linenr << ":C" << idx << ";" <<cals[idx]->remove_event(event, d, m, y) << endl; break;
+                        case 0: case EOF: cout << "L" << linenr << ":C" << idx << ";R" <<cals[idx]->remove_event(event) << endl; break;
+                        case 1: cout << "L" << linenr << ":C" << idx << ";R" <<cals[idx]->remove_event(event, d) << endl; break;
+                        case 2: cout << "L" << linenr << ":C" << idx << ";R" <<cals[idx]->remove_event(event, d, m) << endl; break;
+                        case 3: cout << "L" << linenr << ":C" << idx << ";R" <<cals[idx]->remove_event(event, d, m, y) << endl; break;
 						default:
 								  assert(!"Unreachable code (remove_event switch)");
 					}

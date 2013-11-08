@@ -2,7 +2,7 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-03
+/// Version: 2013-11-06
 
 #include "julian.h"
 #include <stdexcept>
@@ -101,6 +101,17 @@ void Julian::setDateFromJulian(double modjulian)
 
 	// Set Day of week
     currentWeekday_ = res;
+}
+
+// Sets the date's year, month and day to input.
+void Julian::set_date(int year, int month, int day)
+{
+	currentYear_  = year;
+	currentMonth_ = month;
+	currentDay_   = day;
+	updateFebruaryDays(isLeapYear());
+	currentWeekday_ = calculateCurrentWeekday(currentYear_, currentMonth_, currentDay_);
+	checkValidDate(); 
 }
 
 // Postfix ++ operator; Increases date by one day.

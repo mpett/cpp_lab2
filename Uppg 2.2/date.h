@@ -4,7 +4,7 @@
 /// 
 /// Authors: Martin Pettersson, Christoffer Wiss
 ///
-/// Version: 2013-11-03
+/// Version: 2013-11-06
 
 #pragma once
 
@@ -21,10 +21,10 @@ namespace lab2
 			// Destructor (deallocate allocated memory here).
 			virtual ~Date();
 		
-			// Default Constructor
+            // Default Constructor.
 			Date() = default; 
 			
-			// Constructor
+            // Constructor.
 			Date(int year, int month, int day, int weekDay, int daysPerWeek, int monthsPerYear) : 
 				currentYear_(year), currentMonth_(month), currentDay_(day), currentWeekday_(weekDay), daysPerWeek_(daysPerWeek), monthsPerYear_(monthsPerYear) {} ;
 
@@ -56,7 +56,7 @@ namespace lab2
 			virtual string month_name() const = 0;
 
 			// Assignment operator. Assigns from date reference. Returns reference to a new date object.
-			virtual Date& operator=(const Date& date) = 0;
+			virtual Date& operator=(const Date& date);
 
 			// Prefix ++ operator; Increases date by one day.
 			Date& operator++();
@@ -76,6 +76,9 @@ namespace lab2
 			
 			// Adds n to current month
 			virtual void add_month(int n = 1) = 0;
+			
+			// Sets the date's year, month and day to input.
+			virtual void set_date(int year, int month, int day) = 0;
 			
 			// Checks if two dates are the same.
 			// This is done by first converting both dates to their Julian Day number
